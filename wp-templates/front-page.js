@@ -36,22 +36,22 @@ export default function Component() {
           <div className="text-center">
             {posts.map(post => {
               return (
-                <section key={post.title}>
-                  <a href={post.uri}><h3>{post.title}</h3></a>
+                <section key={post?.title}>
+                  <a href={post?.uri}><h3>{post?.title}</h3></a>
                   <div>
                     Categories:&nbsp;
-                    { post.categories?.nodes.map(category =>{
+                    { post?.categories?.nodes.map(category =>{
                       return (<span>
                         <a 
-                          key={`${category.name}-${post.title}`} 
-                          href={category.uri}>{category.name}
+                          key={`${category?.name}-${post?.title}`} 
+                          href={category?.uri}>{category?.name}
                         </a><span>&nbsp;&nbsp;</span>
                       
                       </span>)
                     })
                     }
                   </div>
-                  <div dangerouslySetInnerHTML={{__html: post.excerpt}}></div>
+                  <div dangerouslySetInnerHTML={{__html: post?.excerpt}}></div>
                 </section>
               )
             })}
