@@ -20,6 +20,7 @@ export default function Component() {
     data?.generalSettings;
   const primaryMenu = data?.headerMenuItems?.nodes ?? [];
   const footerMenu = data?.footerMenuItems?.nodes ?? [];
+  const posts = data?.posts?.nodes;
 
   return (
     <>
@@ -31,10 +32,29 @@ export default function Component() {
       />
       <Main>
         <Container>
-          <Hero title={'Front Page'} />
+          <Hero title={'Headless Demo'} />
           <div className="text-center">
-            <p>This page is utilizing the "front-page" WordPress template.</p>
-            <code>wp-templates/front-page.js</code>
+            {posts.map(post => {
+              return (
+                <section key={post.title}>
+                  <a href={post.uri}><h3>{post.title}</h3></a>
+                  <div>
+                    Categories:&nbsp;
+                    { post.categories?.nodes.map(category =>{
+                      return (<span>
+                        <a 
+                          key={`${category.name}-${post.title}`} 
+                          href={category.uri}>{category.name}
+                        </a><span>&nbsp;&nbsp;</span>
+                      
+                      </span>)
+                    })
+                    }
+                  </div>
+                  <div dangerouslySetInnerHTML={{__html: post.excerpt}}></div>
+                </section>
+              )
+            })}
           </div>
         </Container>
       </Main>
@@ -50,6 +70,19 @@ Component.query = gql`
     $headerLocation: MenuLocationEnum
     $footerLocation: MenuLocationEnum
   ) {
+    posts(first: 10) {
+      nodes {
+        title
+        excerpt
+        uri
+        categories {
+          nodes {
+            name
+            uri
+          }
+        }
+      }
+    }
     generalSettings {
       ...BlogInfoFragment
     }
