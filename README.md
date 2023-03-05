@@ -178,7 +178,203 @@ Now, if you save this file and refresh your homepage in the browser, the most re
 
 ## Step 3: Display ACF Fields on Single Post Page
 
-Now that we have an idea of how Faust.js works, you can update your `/wp-templates/single.js` file to consume and display data from the custom data fields created with ACF.
+Now that we have an idea of how Faust.js works, you can update your `/wp-templates/single.js` file to consume and display data from the custom data fields created with ACF. To do that, you'll  need to update the query that gets data for a single post and then create some components to display that data. Since we have a few different field groups based on the category, we'll also want to do some conditional rendering to keep the display clean.
+
+### Step 3.1: Update the Single Post Query
+
+When we create field groups and attach them to posts, the ACF for WPGraphQL extension makes these a part of that content object's schema. To pull in the ACF data, you'll need to make some slight modifications to the default query in the `/wp-templates/single.js` file.
+
+Replace the part of your query that gets a post by its databaseId with this code:
+
+```
+post(id: $databaseId, idType: DATABASE_ID, asPreview: $asPreview) {
+    title
+    content
+    date
+        author {
+            node {
+                name
+            }
+    }
+    sweetMixtape {
+        album
+        artist
+        trackTitle
+    }
+    foodResources {
+        recipeLink
+        recipeName
+    }
+    categories {
+        nodes {
+            name
+        }
+    }
+    ...FeaturedImageFragment
+}
+```
+
+This extends the default query, and gives us access to the post's `categories` as well as anything defined on the `sweetMixtape` or `foodResources` fields. 
+
+After these lines are added to the component's query, you destructure them from the component props with the rest of the page data:
+```
+const { title, content, featuredImage, date, author, sweetMixtape, foodResources, categories } = props.data.post;
+```
+Since we defined both `sweetMixtape` and `foodResources` fields on out Post type and requested them in the query, WPGraphQL will return entries for both of these field groups even if only one is present in the database. If we didn't specify a mixtape because a post was in the "Food" category, those entries will be returned as `null` in the WPGraphQL response.
+
+To make those display conditionally, you can create some variables to use inside of the component to determine when to render specific resources:
+```
+const isFood = categories?.nodes.filter(category => category.name === 'Food').length > 0 ? true : false;
+const isMusic = categories?.nodes.filter(category => category.name === 'Music').length > 0 ? true : false;
+```
+These lines check the category nodes assigned to a post to determine what categories have been assigned.
+
+### Step 3.2: Create FoodResource Component
+
+
+First, create a new directory called `/components/FoodResources` and create these three files inside of the directory:
+```
+FoodResources.js
+index.js
+FoodResources.modules.scss
+```
+First, set the contents of `FoodResources.js` to this:
+
+```
+import styles from './FoodResources.module.scss';
+
+export default function FoodResources({recipeName, recipeLink}){
+    return (
+        <section className={styles.component}> 
+            <h4>🌯 Cook Along</h4>
+            <a href={recipeLink}>{recipeName}</a>
+        </section>
+    )
+}
+```
+This code creates our `FoodResources` component, and imports some our styles and scopes them to the component.
+
+From here, add the following style rules to the `FoodResources.modules.scss` file:
+```
+.component {
+    h4 {
+        margin: 2rem 0;
+    }
+}
+```
+Then export the component in `components/FoodResources/index.js`:
+```
+export { default as FoodResources } from './FoodResources'
+```
+
+To make our component available, import and export our new `FoodResources` component from `components/index.js`:
+```
+export { FoodResources } from './FoodResources';
+```
+
+Next, you can create another component called `MusicResources` that looks almost identical.
+
+### Step 3.3: Create a MusicResources Component
+
+First, create a new directory called `/components/MusicResources` and create these three files inside of the directory:
+```
+MusicResources.js
+index.js
+MusicResources.modules.scss
+```
+First, set the contents of `MusicResources.js` to this:
+
+```
+import styles from './MusicResources.module.scss';
+
+export default function MusicResources({trackTitle, artist, album}){
+    return (
+        <section className={styles.component}> 
+            <h4>💿 Jam Along</h4>
+            <div><i>{trackTitle}</i> by {artist} from the album "{album}"</div>
+        </section>
+    )
+}
+```
+This code creates our `MusicResources` component, and imports some our styles and scopes them to the component.
+
+From here, add the following style rules to the `MusicResources.modules.scss` file:
+```
+.component {
+    h4 {
+        margin: 2rem 0;
+    }
+}
+```
+Then export the component in `components/MusicResources/index.js`:
+```
+export { default as MusicResources } from './MusicResources'
+```
+
+To make our component available, import and export our new `MusicResources` component from `components/index.js`:
+```
+export { MusicResources } from './MusicResources';
+```
+Now that you have created both components, you can render them conditionally inside of your template component for a single post.
+
+### Step 3.4: Display Post Resource Fields
+
+To display the `MusicResources` and `FoodResources` components, first you'll need to update the existing component import in `/wp-templates/single.js`:
+```
+import {
+  Header,
+  Footer,
+  Main,
+  Container,
+  EntryHeader,
+  NavigationMenu,
+  ContentWrapper,
+  FeaturedImage,
+  SEO,
+  MusicResources,
+  FoodResources
+} from '../components';
+```
+You'll want to display these resource components in the main content area below the post content, so to do that you can implement the components as children of the `ContentWrapper` component:
+```
+<ContentWrapper content={content}>
+    {isFood ? 
+    (<FoodResources recipeName={foodResources.recipeName} recipeLink={foodResources.recipeLink}>
+    </FoodResources>) 
+    : null }
+
+
+    {isMusic ? 
+    
+    (<MusicResources 
+        trackTitle={sweetMixtape.trackTitle}
+        artist={sweetMixtape.artist}
+        album={sweetMixtape.album}
+    ></MusicResources>)   
+    : null }
+</ContentWrapper>
+```
+
+Using the `isMusic` and `isFood` boolean values, these components will be conditionally rendered based on their category. In a real world application, you'd either want to make these fields required or implement another layer of checking since a post may be of a particular category, but not have these fields defined.
+
+## Deploy
+
+You access a deployable version of this project by running `git checkout finished` in your terminal.
+
+[Atlas](https://wpengine.com/atlas/) is WP Engine's headless WordPress hosting platform, where an app consists of a WordPress install and a Node.js hosting container, powered by modern JAMstack developer workflows. 
+
+You can sign up for an [Atlas Sandbox Account](https://my.wpengine.com/signup?plan=headless-eval) to deploy your app. The sign up process asks for a credit card, but this does not get charged. It's only for fraud prevention purposes.
+
+This `finished` branch is ready to be deployed against a WordPress environment. If you create a WordPress installation on WP Engine, you can use the [Local Connect](https://wpengine.com/support/local/#Push_to_WP_Engine_from_Local) feature to push your Local site to the cloud.
+
+You can follow our [getting started guide on deploying from your own repository](https://developers.wpengine.com/docs/atlas/getting-started/deploy-from-existing-repo). You will need to set the values for the `NEXT_PUBLIC_WORDPRESS_URL` and `FAUST_SECRET_KEY` environment variables during the deploy process.
+
+## Want to Learn More?
+To get more content from the WP Engine developer relations team, you can [read tutorials on our website](https://developers.wpengine.com/) or [watch on our YouTube channel](https://www.youtube.com/channel/UCh1WuL54XFb9ZI6m6goFv1g). Our [Headless WordPress Developer Roadmap](https://developers.wpengine.com/roadmap) builds on the concepts you learned here today and fills in some background on a few key technologies like React and GraphQL.
+
+If you're on Discord, join the 700+ developers in [the headless WordPress Discord community](https://developers.wpengine.com/discord). This is a great place to ask questions, and stay updated on community events like this one.
+
+
 
 
 
