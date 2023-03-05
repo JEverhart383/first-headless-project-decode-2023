@@ -11,8 +11,14 @@ From there, drag and drop the WordPress export, created by WP Migrate, into your
 Username: admin
 Password: BWQqXaXnba(xg&JuBNgAl(7z
 ```
+Please check out [this article on SSL with Local](https://localwp.com/help-docs/ssl/ssl-in-local/) if you have issues using HTTPS on your machine.
 
 This WordPress site comes pre-installed with a few important plugins you'll need on your journey to build this headless site.
+
+- [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/)
+- [WPGraphQL for Advanced Custom Fields](https://www.wpgraphql.com/acf)
+- [WPGraphQL](https://wordpress.org/plugins/wp-graphql/)
+- [Faust](https://wordpress.org/plugins/faustwp/)
 
 
 ## Step 1: Configure Faust.js Environment Variables
@@ -172,7 +178,7 @@ Now, if you save this file and refresh your homepage in the browser, the most re
 
 ## Step 3: Display ACF Fields on Single Post Page
 
-Now that we have an idea of how Faust.js works ,
+Now that we have an idea of how Faust.js works, you can update your `/wp-templates/single.js` file to consume and display data from the custom data fields created with ACF.
 
 
 
