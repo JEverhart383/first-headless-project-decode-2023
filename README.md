@@ -138,8 +138,8 @@ To make our component available, import and export our new `PostExcerpt` compone
 ```
 export { PostExcerpt } from './PostExcerpt';
 ```
-
-And finally, add it to the existing import statement in `/wp-templates/front-page.js`:
+### Step 2.3: Update Homepage
+To make the `PostExcerpt` component available in our homepage add it to the existing import statement in `/wp-templates/front-page.js`:
 
 ```
 import {
@@ -153,7 +153,19 @@ import {
   PostExcerpt
 } from '../components';
 ```
-
+From here, since you've already defined the value of `posts` in this file, update the `Main` component code to map through our array of posts and render a `PostExcerpt` component for each entry:
+```
+<Main>
+    <Container>
+        <Hero title={'Headless Demo'} />
+        <div className="text-center">
+            {posts.map(post => {
+                return (<PostExcerpt post={post}></PostExcerpt>)
+            })}
+        </div>
+    </Container>
+</Main>
+```
 Now, if you save this file and refresh your homepage in the browser, the most recent posts should be displayed 🎉
 
 
