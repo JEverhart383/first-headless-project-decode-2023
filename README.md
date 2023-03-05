@@ -6,7 +6,9 @@
 ## Step 0: Configure WordPress and Explore Resources
 Fork this repository into your own account and clone locally so you can work with it.
 
-From there, drag and drop the WordPress export contained in `headlesswpdemo-export.zip` file, created by [WP Migrate](https://deliciousbrains.com/wp-migrate-2-6-released/), into your Local development environment. All of the plugins you need should be installed and activated, you can log in with an admin account using these credentials:
+From there, drag and drop the WordPress export contained in `headlesswpdemo-export.zip` file, created by [WP Migrate](https://deliciousbrains.com/wp-migrate-2-6-released/), into your [Local development environment](https://localwp.com/). I created these resources with version 6.6.1 on MacOS.
+
+All of the plugins you need should be installed and activated, you can log in with an admin account using these credentials:
 ```
 Username: admin
 Password: BWQqXaXnba(xg&JuBNgAl(7z
@@ -106,14 +108,13 @@ import styles from './PostExcerpt.module.scss';
 
 export default function PostExcerpt({post}) {
     return (
-        <section key={post?.title} className={styles.component}>
+        <section className={styles.component}>
           <a href={post?.uri}><h3>{post?.title}</h3></a>
           <div>
             Categories:
             { post?.categories?.nodes.map(category =>{
-                return (<span>
+                return (<span key={`${category?.name}-${post?.title}`}>
                     <a 
-                    key={`${category?.name}-${post?.title}`} 
                     href={category?.uri}>{category?.name}
                     </a>
                 </span>)
@@ -168,7 +169,7 @@ From here, since you've already defined the value of `posts` in this file, updat
         <Hero title={'Headless Demo'} />
         <div className="text-center">
             {posts.map(post => {
-                return (<PostExcerpt post={post}></PostExcerpt>)
+              return (<PostExcerpt post={post} key={post.title}></PostExcerpt>)
             })}
         </div>
     </Container>
