@@ -6,7 +6,7 @@
 ## Step 0: Configure WordPress and Explore Resources
 Fork this repository into your own account and clone locally so you can work with it.
 
-From there, drag and drop the WordPress export, created by WP Migrate, into your Local development environment. All of the plugins you need should be installed and activated, you can log in with an admin account using these credentials:
+From there, drag and drop the WordPress export contained in `headlesswpdemo-export.zip` file, created by [WP Migrate](https://deliciousbrains.com/wp-migrate-2-6-released/), into your Local development environment. All of the plugins you need should be installed and activated, you can log in with an admin account using these credentials:
 ```
 Username: admin
 Password: BWQqXaXnba(xg&JuBNgAl(7z
