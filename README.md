@@ -138,6 +138,8 @@ To make our component available, import and export our new `PostExcerpt` compone
 ```
 export { PostExcerpt } from './PostExcerpt';
 ```
+It's worth noting that the component organization you see here is a convention of the Faust.js getting started template and not a requirement. If you want to organize your components in a different way, or use another styling convention, that is totally up to you.
+
 ### Step 2.3: Update Homepage
 To make the `PostExcerpt` component available in our homepage add it to the existing import statement in `/wp-templates/front-page.js`:
 
@@ -168,8 +170,9 @@ From here, since you've already defined the value of `posts` in this file, updat
 ```
 Now, if you save this file and refresh your homepage in the browser, the most recent posts should be displayed 🎉
 
+## Step 3: Display ACF Fields on Single Post Page
 
-
+Now that we have an idea of how Faust.js works ,
 
 
 
