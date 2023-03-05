@@ -36,7 +36,7 @@ export default function Component() {
           <Hero title={'Headless Demo'} />
           <div className="text-center">
             {posts.map(post => {
-              return (<PostExcerpt post={post}></PostExcerpt>)
+              return (<PostExcerpt post={post} key={post.title}></PostExcerpt>)
             })}
           </div>
         </Container>
