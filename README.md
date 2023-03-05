@@ -25,7 +25,7 @@ Next, click `Regenerate` to create a new `Secret Key` value and copy that value 
 
 Now, transition back to your terminal and run the following command to create a new `.env.local` file from the sample:
 ```
-cp env.local.sample env.local
+cp .env.local.sample .env.local
 ```
  In this file, you will replace the `NEXT_PUBLIC_WORDPRESS_URL` value with `https://acfheadless.wpengine.local/` and the `FAUST_SECRET_KEY` value with the contents of your clipboard.
 
