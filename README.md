@@ -5,6 +5,11 @@
 
 ## Step 0: Configure WordPress and Explore Resources
 Fork this repository into your own account and clone locally so you can work with it.
+```
+git clone https://github.com/JEverhart383/first-headless-project-decode-2023.git
+
+cd first-headless-project-decode-2023
+```
 
 From there, drag and drop the WordPress export contained in `headlesswpdemo-export.zip` file, created by [WP Migrate](https://deliciousbrains.com/wp-migrate-2-6-released/), into your [Local development environment](https://localwp.com/). I created these resources with version 6.6.1 on MacOS.
 
